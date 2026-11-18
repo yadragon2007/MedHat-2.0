@@ -123,6 +123,12 @@ const CONFIG = {
   ]
 };
 
+/* State – must be declared BEFORE the charts are built */
+let xNow = 0;           // latest x (seconds) – right edge of every graph
+let t0 = null;          // first ESP timestamp seen (ms), to start at 0
+let paused = false;
+let dirty = false;
+
 /* ============================================================
    Build the cards + charts
    ============================================================ */
@@ -187,13 +193,7 @@ CONFIG.charts.forEach(cfg => {
   panels[cfg.key] = { cfg, chart, data, valueEl: card.querySelector(".num") };
 });
 
-/* ============================================================
-   Data handling
-   ============================================================ */
-let xNow = 0;           // latest x (seconds) – right edge of every graph
-let t0 = null;          // first ESP timestamp seen (ms), to start at 0
-let paused = false;
-let dirty = false;
+
 
 function xFromSample(s) {
   if (typeof s.t === "number") {
