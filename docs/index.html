@@ -17,7 +17,7 @@
     --wait: #c98a1b;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
       --paper: #1d1719;
       --grid: #3a2b2f;
       --ink: #f3e8e4;
@@ -25,6 +25,14 @@
       --card: #251d20;
       --line: #4a373c;
     }
+  }
+  :root[data-theme="dark"] {
+    --paper: #1d1719;
+    --grid: #3a2b2f;
+    --ink: #f3e8e4;
+    --muted: #b09ca1;
+    --card: #251d20;
+    --line: #4a373c;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
@@ -89,6 +97,7 @@
     <span class="dot" id="dot"></span><span id="statusText">Connecting…</span>
   </div>
   <div class="tools">
+    <button id="themeBtn" type="button">Dark mode</button>
     <button id="pauseBtn" type="button">Pause</button>
     <button id="clearBtn" type="button">Clear</button>
   </div>
@@ -312,6 +321,26 @@ function startDemo() {
     }));
   }, 40);
 }
+const themeBtn = document.getElementById("themeBtn");
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem("theme", theme); } catch {}
+  themeBtn.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+  for (const key in panels) {                 // chart colors are set in JS, so update them too
+    const chart = panels[key].chart, s = chart.options.scales;
+    s.x.ticks.color = cssVar("--muted");  s.x.border.color = cssVar("--line");
+    s.y.ticks.color = cssVar("--muted");  s.y.grid.color = cssVar("--grid");
+    chart.update("none");
+  }
+}
+
+let savedTheme = null;
+try { savedTheme = localStorage.getItem("theme"); } catch {}
+applyTheme(savedTheme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+
+themeBtn.onclick = () =>
+  applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
 
 if (params.has("demo")) startDemo(); else connect();
 </script>
