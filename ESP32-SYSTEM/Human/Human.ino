@@ -23,6 +23,9 @@ const int NUM_MODES = 4;
 int currentMode = -1;  // -1 = nothing selected
 bool lastState[4] = { HIGH, HIGH, HIGH, HIGH };
 
+const int ecgSignalPin = 13;
+
+
 
 void setup() {
   atriumServo.attach(atriumServoPin, 500, 2500);
@@ -35,6 +38,9 @@ void setup() {
     pinMode(LEDs[i], OUTPUT);
     digitalWrite(LEDs[i], LOW);
   }
+  // ecg signal
+  pinMode(ecgSignalPin, OUTPUT);
+  
 
   Serial.begin(115200);
   Serial.println("ESP32 Serial Monitor ready");
