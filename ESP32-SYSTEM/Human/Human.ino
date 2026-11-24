@@ -75,6 +75,3 @@ void lowBloodPressure() {
 void ventircularFirbrillation() {
   return;
 }
-void completeHeartBlock() {
-  return;
-}

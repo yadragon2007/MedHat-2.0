@@ -5,7 +5,8 @@ int selectBpm() {
   return bpm;
 }
 
-void moveServo(Servo &s, int ang1, int ang2, unsigned long durationMs) {
+// New version: calls onTick() on every step so other work can keep running
+void moveServo(Servo &s, int ang1, int ang2, unsigned long durationMs, void (*onTick)()) {
   if (durationMs == 0 || ang1 == ang2) {
     s.write(ang2);
     return;
@@ -16,11 +17,14 @@ void moveServo(Servo &s, int ang1, int ang2, unsigned long durationMs) {
 
   while ((elapsed = millis() - start) < durationMs) {
     float t = (float)elapsed / durationMs;  // 0.0 -> 1.0
-    int angle = ang1 + (int)((ang2 - ang1) * t);
-    Serial.println(angle);
-
-    s.write(angle);
+    s.write(ang1 + (int)((ang2 - ang1) * t));
+    if (onTick) onTick();
     delay(10);  // ~100 updates per second
   }
-  s.write(ang2);  // make sure it lands exactly on target
+  s.write(ang2);  // land exactly on target
+}
+
+// Original signature still works
+void moveServo(Servo &s, int ang1, int ang2, unsigned long durationMs) {
+  moveServo(s, ang1, ang2, durationMs, nullptr);
 }
