@@ -1,0 +1,75 @@
+:root {
+  --paper: #fbf4f0;
+  --grid: #efd2cb;
+  --ink: #2a2225;
+  --muted: #7a6a6e;
+  --card: #fffaf7;
+  --line: #e3c3bb;
+  --ok: #2e8b57;
+  --bad: #c0392b;
+  --wait: #c98a1b;
+}
+:root[data-theme="dark"] {
+  --paper: #1d1719;
+  --grid: #3a2b2f;
+  --ink: #f3e8e4;
+  --muted: #b09ca1;
+  --card: #251d20;
+  --line: #4a373c;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--ink);
+  background-color: var(--paper);
+  /* ECG-paper grid */
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: -1px -1px;
+  min-height: 100vh;
+}
+
+header {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 12px; padding: 20px clamp(14px, 3vw, 32px) 8px;
+}
+h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700; font-size: clamp(1.4rem, 3vw, 2rem); margin: 0; letter-spacing: -0.01em;
+}
+.status { display: flex; align-items: center; gap: 8px; font-size: .9rem; color: var(--muted); }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--wait); }
+.dot.on { background: var(--ok); }
+.dot.off { background: var(--bad); }
+.tools { display: flex; gap: 8px; }
+button {
+  font: inherit; font-size: .85rem; color: var(--ink); background: var(--card);
+  border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer;
+}
+button:hover { border-color: var(--ink); }
+button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+main {
+  display: grid; gap: 14px; padding: 8px clamp(14px, 3vw, 32px) 32px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+  padding: 12px 14px 10px; min-width: 0;
+}
+.card.wide { grid-column: 1 / -1; }
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.card h2 { margin: 0; font-size: 1rem; font-weight: 600; }
+.card .sub { margin: 2px 0 0; font-size: .8rem; color: var(--muted); }
+.value { font-family: Georgia, serif; font-size: 1.9rem; font-weight: 700; white-space: nowrap; }
+.value small { font-family: system-ui, sans-serif; font-size: .8rem; font-weight: 400; color: var(--muted); margin-left: 3px; }
+.chart-box { position: relative; height: 200px; margin-top: 6px; }
+.card.wide .chart-box { height: 240px; }
+@media (max-width: 760px) {
+  main { grid-template-columns: 1fr; }
+}
