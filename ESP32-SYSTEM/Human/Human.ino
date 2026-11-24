@@ -39,7 +39,7 @@ void setup() {
     digitalWrite(LEDs[i], LOW);
   }
   // ecg signal
-  pinMode(ecgSignalPin, OUTPUT);
+  ecgSetup();
   
 
   Serial.begin(115200);
@@ -55,6 +55,7 @@ void loop() {
 
 void normalHeartBeat() {
   int bpm = selectBpm();
+  ecgStartBeat(bpm);
   float bps = bpm / 60.0;
   float beatPirod = 1.0 / bps;
 
