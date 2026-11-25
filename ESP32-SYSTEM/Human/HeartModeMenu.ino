@@ -1,3 +1,6 @@
+bool lastState[4] = { HIGH, HIGH, HIGH, HIGH };
+int currentMode = -1;  // -1 = nothing selected
+const int NUM_MODES = 4;
 
 void HeartMode() {
   for (int i = 0; i < NUM_MODES; i++) {

@@ -18,11 +18,6 @@ const int btn4 = 33;
 const int BTNs[4] = { btn1, btn2, btn3, btn4 };
 
 const int bpmPotentiometerPin = 34;
-
-const int NUM_MODES = 4;
-int currentMode = -1;  // -1 = nothing selected
-bool lastState[4] = { HIGH, HIGH, HIGH, HIGH };
-
 const int ecgSignalPin = 13;
 
 
