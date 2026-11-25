@@ -1,12 +1,11 @@
 int selectBpm() {
   int raw = analogRead(bpmPotentiometerPin);
-  int bpm = map(raw, 0, 4095, 40, 150);
-  delay(50);
-  return bpm;
+  return map(raw, 0, 4095, 40, 150);   // removed the 50 ms delay
 }
 
-// New version: calls onTick() on every step so other work can keep running
 void moveServo(Servo &s, int ang1, int ang2, unsigned long durationMs, void (*onTick)()) {
+  if (modeChanged) return;             // abandon the beat immediately
+
   if (durationMs == 0 || ang1 == ang2) {
     s.write(ang2);
     return;
@@ -16,15 +15,17 @@ void moveServo(Servo &s, int ang1, int ang2, unsigned long durationMs, void (*on
   unsigned long elapsed;
 
   while ((elapsed = millis() - start) < durationMs) {
-    float t = (float)elapsed / durationMs;  // 0.0 -> 1.0
+    pollButtons();
+    if (modeChanged) return;           // don't finish the old mode's movement
+
+    float t = (float)elapsed / durationMs;
     s.write(ang1 + (int)((ang2 - ang1) * t));
     if (onTick) onTick();
-    delay(10);  // ~100 updates per second
+    delay(10);
   }
-  s.write(ang2);  // land exactly on target
+  s.write(ang2);
 }
 
-// Original signature still works
 void moveServo(Servo &s, int ang1, int ang2, unsigned long durationMs) {
   moveServo(s, ang1, ang2, durationMs, nullptr);
 }

@@ -2,12 +2,12 @@
 // Atrium and ventricle beat independently (no AV conduction).
 // Ventricular escape rhythm = 40 BPM.
 
-const int HB_REST     = 0;
+const int HB_REST = 0;
 const int HB_CONTRACT = 25;
 
-const unsigned long HB_V_PERIOD     = 60000UL / 40;  // 1500 ms
-const unsigned long HB_A_MOVE       = 90;            // each way -> 180 ms contraction
-const unsigned long HB_V_MOVE       = 125;           // each way -> 250 ms contraction
+const unsigned long HB_V_PERIOD = 60000UL / 40;  // 1500 ms
+const unsigned long HB_A_MOVE = 90;              // each way -> 180 ms contraction
+const unsigned long HB_V_MOVE = 125;             // each way -> 250 ms contraction
 const unsigned long HB_ECG_INTERVAL = 5;
 
 bool hbInitialized = false;
@@ -32,12 +32,12 @@ void hbSampleEcg() {
   float ecg = 2048;
 
   if (hbHasAtrial) {
-    ecg += 260 * hbTriangle(now - hbLastAtrial, 70, 160);       // P wave
+    ecg += 260 * hbTriangle(now - hbLastAtrial, 70, 160);  // P wave
   }
   if (hbHasVentricle) {
     unsigned long t = now - hbLastVentricle;
-    ecg -= 850 * hbTriangle(t, 15, 80);                          // QRS
-    ecg += 350 * hbTriangle(t, 180, 330);                        // T wave
+    ecg -= 850 * hbTriangle(t, 15, 80);    // QRS
+    ecg += 350 * hbTriangle(t, 180, 330);  // T wave
   }
 
   Serial.println((int)constrain(ecg, 0.0f, 4095.0f));
@@ -53,7 +53,7 @@ void completeHeartBlock() {
   if (!hbInitialized) {
     hbInitialized = true;
     unsigned long now = millis();
-    hbNextAtrial    = now;
+    hbNextAtrial = now;
     hbNextVentricle = now + HB_V_PERIOD / 2;
     atriumServo.write(HB_REST);
     ventricleServo.write(HB_REST);
@@ -63,16 +63,18 @@ void completeHeartBlock() {
   if ((long)(millis() - hbNextAtrial) >= 0) {
     int bpm = selectBpm();
     hbLastAtrial = millis();
-    hbHasAtrial  = true;
+    hbHasAtrial = true;
     hbNextAtrial = hbLastAtrial + 60000UL / bpm;
     hbBeat(atriumServo, HB_A_MOVE);
   }
 
+  if (modeChanged) return;  // <-- add this line
+
   // Ventricle: independent escape rhythm (no signal from the atrium)
   if ((long)(millis() - hbNextVentricle) >= 0) {
-    hbLastVentricle  = millis();
-    hbHasVentricle   = true;
-    hbNextVentricle += HB_V_PERIOD;   // fixed 40 BPM, no drift
+    hbLastVentricle = millis();
+    hbHasVentricle = true;
+    hbNextVentricle += HB_V_PERIOD;  // fixed 40 BPM, no drift
     hbBeat(ventricleServo, HB_V_MOVE);
   }
 

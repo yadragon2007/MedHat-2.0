@@ -17,9 +17,15 @@ const int btn3 = 4;
 const int btn4 = 33;
 const int BTNs[4] = { btn1, btn2, btn3, btn4 };
 
+const int NUM_MODES = 4;
+int currentMode = -1;  // -1 = nothing selected
+bool lastState[4] = { HIGH, HIGH, HIGH, HIGH };
+
+
 const int bpmPotentiometerPin = 34;
 const int ecgSignalPin = 13;
 
+volatile bool modeChanged = false;  // set by pollButtons(), cleared by HeartMode()
 
 
 void setup() {
@@ -35,7 +41,7 @@ void setup() {
   }
   // ecg signal
   ecgSetup();
-  
+
 
   Serial.begin(115200);
   Serial.println("ESP32 Serial Monitor ready");
@@ -56,10 +62,10 @@ void normalHeartBeat() {
 
   unsigned long StartTime = millis();
   // atrium(50, 50);
-  moveServo(atriumServo, 0, 25, beatPirod*1000/8);
-  moveServo(atriumServo, 25, 0, beatPirod*1000/8);
-  moveServo(ventricleServo, 0, 25, beatPirod*1000/8*3);
-  moveServo(ventricleServo, 25, 0, beatPirod*1000/8*3);
+  moveServo(atriumServo, 0, 25, beatPirod * 1000 / 8);
+  moveServo(atriumServo, 25, 0, beatPirod * 1000 / 8);
+  moveServo(ventricleServo, 0, 25, beatPirod * 1000 / 8 * 3);
+  moveServo(ventricleServo, 25, 0, beatPirod * 1000 / 8 * 3);
   unsigned long middel = millis();
   // ventricle(350, 350);
   unsigned long finalTime = millis();
